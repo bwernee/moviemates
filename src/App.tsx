@@ -5,13 +5,14 @@ import Watchlist from './pages/Watchlist'
 import Friends from './pages/Friends'
 import Profile from './pages/Profile'
 import MovieDetail from './pages/MovieDetail'
+import { HomeIcon, SearchIcon, BookmarkIcon, UsersIcon, UserIcon } from './components/Icons'
 
 const navItems = [
-  { path: '/', label: 'Home', icon: '🏠' },
-  { path: '/search', label: 'Search', icon: '🔎' },
-  { path: '/watchlist', label: 'Watchlist', icon: '📌' },
-  { path: '/friends', label: 'Friends', icon: '👥' },
-  { path: '/profile', label: 'Profile', icon: '👤' },
+  { path: '/', label: 'Home', Icon: HomeIcon },
+  { path: '/search', label: 'Search', Icon: SearchIcon },
+  { path: '/watchlist', label: 'Watchlist', Icon: BookmarkIcon },
+  { path: '/friends', label: 'Friends', Icon: UsersIcon },
+  { path: '/profile', label: 'Profile', Icon: UserIcon },
 ]
 
 export default function App() {
@@ -29,14 +30,14 @@ export default function App() {
       </main>
 
       <nav className="bottom-nav" aria-label="Main navigation">
-        {navItems.map(({ path, label, icon }) => (
+        {navItems.map(({ path, label, Icon }) => (
           <NavLink
             key={path}
             to={path}
             className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
             end={path === '/'}
           >
-            <span className="nav-icon" aria-hidden>{icon}</span>
+            <Icon className="nav-icon" />
             <span>{label}</span>
           </NavLink>
         ))}

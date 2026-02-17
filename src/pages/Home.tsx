@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getTrending, getPopular, getTopRated } from '../services/tmdb'
+import { getTrending, getPopular, getTopRated, hasTmdbKey } from '../services/tmdb'
 import type { Movie } from '../types'
 
 export default function Home() {
@@ -38,6 +38,11 @@ export default function Home() {
   return (
     <div>
       <h1 className="page-title">Movie Mates</h1>
+      {!hasTmdbKey && (
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem', padding: '0.5rem 0' }}>
+          Using placeholder posters. Add <code style={{ background: 'var(--bg-card)', padding: '0.1rem 0.3rem', borderRadius: 4 }}>VITE_TMDB_API_KEY</code> to a <code style={{ background: 'var(--bg-card)', padding: '0.1rem 0.3rem', borderRadius: 4 }}>.env</code> file for real movie posters (free at themoviedb.org).
+        </p>
+      )}
 
       {/* Upcoming / trending hero */}
       {heroMovie && (

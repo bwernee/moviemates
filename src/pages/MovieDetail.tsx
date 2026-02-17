@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { getMovieDetails, getMovieCredits, getMovieVideos } from '../services/tmdb'
-import type { MovieDetails, CastMember, TrailerVideo } from '../types'
+import type { MovieDetails, CastMember, TrailerVideo, Movie } from '../types'
+import { BackIcon, BookmarkIcon, CheckIcon } from '../components/Icons'
 
 export default function MovieDetail() {
   const { id } = useParams<{ id: string }>()
@@ -38,7 +39,41 @@ export default function MovieDetail() {
       .finally(() => setLoading(false))
   }, [id])
 
-  const toggleWatchlist = () => setInWatchlist((prev) => !prev)
+  useEffect(() => {
+    if (!details) return
+    const stored = localStorage.getItem('moviemates-watchlist')
+    if (stored) {
+      try {
+        const watchlist: Movie[] = JSON.parse(stored)
+        setInWatchlist(watchlist.some((m) => m.id === details.id))
+      } catch {
+        setInWatchlist(false)
+      }
+    }
+  }, [details])
+
+  const toggleWatchlist = () => {
+    if (!details) return
+    const stored = localStorage.getItem('moviemates-watchlist')
+    let watchlist: Movie[] = stored ? JSON.parse(stored) : []
+    const exists = watchlist.some((m) => m.id === details.id)
+    if (exists) {
+      watchlist = watchlist.filter((m) => m.id !== details.id)
+      setInWatchlist(false)
+    } else {
+      watchlist.push({
+        id: details.id,
+        title: details.title,
+        overview: details.overview,
+        posterUrl: details.posterUrl,
+        backdropUrl: details.backdropUrl,
+        releaseYear: details.releaseYear,
+        voteAverage: details.voteAverage,
+      })
+      setInWatchlist(true)
+    }
+    localStorage.setItem('moviemates-watchlist', JSON.stringify(watchlist))
+  }
   const trailer = videos[0]
 
   if (loading) {
@@ -63,7 +98,8 @@ export default function MovieDetail() {
   return (
     <div className="movie-detail">
       <Link to="/" className="movie-detail-back" aria-label="Back to Home">
-        ← Back
+        <BackIcon className="back-icon" />
+        <span>Back</span>
       </Link>
 
       <div className="movie-detail-hero">
@@ -92,7 +128,17 @@ export default function MovieDetail() {
                 className={`btn ${inWatchlist ? 'btn-primary' : 'btn-secondary'}`}
                 onClick={toggleWatchlist}
               >
-                {inWatchlist ? '✓ In Watchlist' : 'Add to Watchlist'}
+                {inWatchlist ? (
+                  <>
+                    <CheckIcon className="btn-icon" />
+                    <span>In Watchlist</span>
+                  </>
+                ) : (
+                  <>
+                    <BookmarkIcon className="btn-icon" />
+                    <span>Add to Watchlist</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

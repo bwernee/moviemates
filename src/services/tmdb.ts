@@ -5,9 +5,21 @@ const IMAGE_BASE = 'https://image.tmdb.org/t/p'
 
 const apiKey = import.meta.env.VITE_TMDB_API_KEY
 
+export const hasTmdbKey = Boolean(apiKey?.trim())
+
 function imageUrl(path: string | null, size: 'w500' | 'w780' | 'original' = 'w500') {
   if (!path) return 'https://placehold.co/500x750/1a1a1a/666?text=No+poster'
   return `${IMAGE_BASE}/${size}${path}`
+}
+
+function posterPlaceholder(title: string): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="500" height="750" viewBox="0 0 500 750"><rect width="500" height="750" fill="#1a1a1a"/><rect x="20" y="20" width="460" height="690" rx="8" fill="#252525" stroke="#333" stroke-width="2"/><text x="250" y="380" fill="#888" font-family="system-ui,sans-serif" font-size="22" font-weight="600" text-anchor="middle">${title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text><text x="250" y="420" fill="#555" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle">Add TMDB API key for real posters</text></svg>`
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`
+}
+
+function backdropPlaceholder(): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="780" height="439" viewBox="0 0 780 439"><rect width="780" height="439" fill="#141414"/><text x="390" y="230" fill="#444" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle">Movie Mates</text></svg>`
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`
 }
 
 function getMockMovies(): Movie[] {
@@ -22,8 +34,8 @@ function getMockMovies(): Movie[] {
     id: m.id,
     title: m.title,
     overview: 'Add VITE_TMDB_API_KEY to .env for real data.',
-    posterUrl: `https://placehold.co/500x750/1a1a1a/666?text=${encodeURIComponent(m.title)}`,
-    backdropUrl: `https://placehold.co/780x439/1a1a1a/444?text=Movie+Mates`,
+    posterUrl: posterPlaceholder(m.title),
+    backdropUrl: backdropPlaceholder(),
     releaseYear: m.year,
     voteAverage: m.rating,
   }))
